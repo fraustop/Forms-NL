@@ -4,6 +4,7 @@ import type { CharacterizationFormData } from '../../types/form';
 import type { StoredFormDetail } from '../../services/formService';
 import { fetchAllFormDetails, deleteFormDocument, exportFormsToCSV } from '../../services/formService';
 import { loginWithGoogle, loginWithEmail, logout, checkIsAdmin } from '../../services/authService';
+import { registerAdminDeviceForNotifications } from '../../services/notificationService';
 import { AUTHORIZED_ADMIN_EMAIL } from '../../firebase/config';
 import { NuevoLeonHeader, SunIllustration } from '../common/BrandAssets';
 import {
@@ -22,6 +23,8 @@ import {
   ArrowLeft,
   KeyRound,
   Download,
+  Bell,
+  Check,
 } from 'lucide-react';
 
 interface ResponsesDashboardProps {
@@ -40,6 +43,8 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [pushStatus, setPushStatus] = useState<string | null>(null);
+  const [pushLoading, setPushLoading] = useState<boolean>(false);
 
   // Email / Password Form State
   const [emailInput, setEmailInput] = useState<string>(AUTHORIZED_ADMIN_EMAIL);
@@ -95,6 +100,14 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
     if (!res.success) {
       setAuthError(res.error || 'Error al autenticar.');
     }
+  };
+
+  const handleEnablePush = async () => {
+    setPushLoading(true);
+    const res = await registerAdminDeviceForNotifications(currentUser);
+    setPushLoading(false);
+    setPushStatus(res.message);
+    setTimeout(() => setPushStatus(null), 4000);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -352,6 +365,17 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
             <div className="flex items-center flex-wrap gap-2 text-xs">
               <button
                 type="button"
+                onClick={handleEnablePush}
+                disabled={pushLoading}
+                className="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Activar notificaciones push para este dispositivo"
+              >
+                <Bell className="w-3.5 h-3.5 text-amber-600" />
+                <span>{pushLoading ? 'Activando...' : 'Activar Notificaciones Push'}</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={onNavigateToForm}
                 className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
               >
@@ -393,6 +417,13 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {pushStatus && (
+          <div className="bg-teal-50 border border-teal-200 rounded-2xl p-3 text-xs text-teal-800 font-semibold flex items-center gap-2 animate-fadeIn">
+            <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{pushStatus}</span>
+          </div>
+        )}
+
         {/* Metric Cards Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex items-center gap-3">

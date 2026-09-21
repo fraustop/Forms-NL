@@ -1,0 +1,35 @@
+name: Notificaciones de Nuevas Respuestas
+
+on:
+  # 1. Ejecución periódica automática cada 30 minutos
+  schedule:
+    - cron: '*/30 * * * *'
+  
+  # 2. Disparo instantáneo vía Webhook/Repository Dispatch cuando se guarda un formulario
+  repository_dispatch:
+    types: [new_form_submission]
+
+  # 3. Disparo manual desde la interfaz de GitHub Actions
+  workflow_dispatch:
+
+jobs:
+  notify:
+    name: Procesar y Enviar Notificaciones Firebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: npm ci
+
+      - name: 🔔 Ejecutar Backend de Notificaciones Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+        run: node scripts/notify-new-submissions.mjs
