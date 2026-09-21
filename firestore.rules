@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Colección de respuestas del Formato de Caracterización de Educación Inicial
+    match /respuestas_caracterizacion/{documentId} {
+      // 1. Cualquier usuario (público) puede enviar y registrar un nuevo formulario
+      allow create: if true;
+
+      // 2. Solo el usuario administrador con correo jazmin2898@gmail.com puede consultar (leer), modificar o borrar respuestas
+      allow read, update, delete: if request.auth != null &&
+        request.auth.token.email.lower() == 'jazmin2898@gmail.com';
+    }
+
+    // Regla global de protección para cualquier otra colección
+    match /{document=**} {
+      allow read, write: if request.auth != null &&
+        request.auth.token.email.lower() == 'jazmin2898@gmail.com';
+    }
+  }
+}

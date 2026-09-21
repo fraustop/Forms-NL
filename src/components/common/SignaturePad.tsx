@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Eraser, PenTool, Check, RefreshCw } from 'lucide-react';
+import { Eraser, PenTool } from 'lucide-react';
 
 interface SignaturePadProps {
   label: string;
