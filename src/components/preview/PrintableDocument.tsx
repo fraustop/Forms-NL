@@ -709,46 +709,30 @@ export const PrintableDocument: React.FC<PrintableDocumentProps> = ({
               {/* Signatures */}
               <div className="grid grid-cols-2 gap-8 pt-6">
                 <div className="text-center">
-                  <div className="h-20 flex items-end justify-center pb-2">
-                    {data.agenteEducativo?.firma ? (
-                      <img
-                        src={data.agenteEducativo.firma}
-                        alt="Firma Agente"
-                        className="max-h-16 max-w-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-xs text-slate-400 italic">
-                        {data.agenteEducativo?.nombre || ''}
-                      </span>
-                    )}
+                  <div className="h-24 border-2 border-dashed border-slate-300 rounded-xl mb-2 flex flex-col items-center justify-center p-2 bg-slate-50/50">
+                    <span className="text-[10px] text-slate-400 italic font-medium">
+                      (Espacio para firma autógrafa)
+                    </span>
                   </div>
-                  <div className="border-t border-slate-800 pt-1 font-bold text-[11px] uppercase tracking-wider text-slate-800">
+                  <div className="border-t-2 border-slate-800 pt-1 font-bold text-[11px] uppercase tracking-wider text-slate-800">
                     AGENTE EDUCATIVO
                   </div>
-                  <div className="text-[10px] text-slate-600 mt-0.5">
-                    {data.agenteEducativo?.nombre || 'Nombre y Firma'}
+                  <div className="text-[11px] font-semibold text-slate-800 mt-0.5">
+                    {data.agenteEducativo?.nombre || 'Guadalupe Jazmín Hernández Amador'}
                   </div>
                 </div>
 
                 <div className="text-center">
-                  <div className="h-20 flex items-end justify-center pb-2">
-                    {data.tutorResponsable?.firma ? (
-                      <img
-                        src={data.tutorResponsable.firma}
-                        alt="Firma Tutor"
-                        className="max-h-16 max-w-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-xs text-slate-400 italic">
-                        {data.tutorResponsable?.nombre || data.mama?.nombre || data.papa?.nombre || ''}
-                      </span>
-                    )}
+                  <div className="h-24 border-2 border-dashed border-slate-300 rounded-xl mb-2 flex flex-col items-center justify-center p-2 bg-slate-50/50">
+                    <span className="text-[10px] text-slate-400 italic font-medium">
+                      (Espacio para firma autógrafa)
+                    </span>
                   </div>
-                  <div className="border-t border-slate-800 pt-1 font-bold text-[11px] uppercase tracking-wider text-slate-800">
+                  <div className="border-t-2 border-slate-800 pt-1 font-bold text-[11px] uppercase tracking-wider text-slate-800">
                     MADRE, PADRE O CUIDADOR RESPONSABLE
                   </div>
-                  <div className="text-[10px] text-slate-600 mt-0.5">
-                    {data.tutorResponsable?.nombre || data.mama?.nombre || data.papa?.nombre || 'Nombre y Firma'}
+                  <div className="text-[11px] font-semibold text-slate-800 mt-0.5">
+                    {data.tutorResponsable?.nombre || data.mama?.nombre || data.papa?.nombre || data.otroCuidador?.nombre || 'Nombre del Responsable'}
                   </div>
                 </div>
               </div>

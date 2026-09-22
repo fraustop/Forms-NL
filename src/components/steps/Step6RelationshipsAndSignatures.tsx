@@ -1,7 +1,6 @@
 import React from 'react';
 import type { CharacterizationFormData } from '../../types/form';
 import { SectionCard, SuggestionChips } from '../common/FormInputs';
-import { SignaturePad } from '../common/SignaturePad';
 import { BeeIllustration } from '../common/BrandAssets';
 import { HeartHandshake, HelpCircle, FileCheck, ShieldCheck, Sparkles, Send, Loader2 } from 'lucide-react';
 
@@ -101,49 +100,130 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
         </div>
       </SectionCard>
 
-      {/* Digital Signatures Module */}
+      {/* Formalization & Print Signature Boxes */}
       <SectionCard
-        title="Formalización y Firmas Digitales"
-        subtitle="Capture o dibuje las firmas correspondientes con el dedo, lápiz táctil o ratón"
+        title="Formalización y Firmas"
+        subtitle="Registro de nombres para el acta. Las firmas se realizarán físicamente con pluma una vez impreso el documento"
         icon={<FileCheck className="w-5 h-5" />}
         badge="Requerido"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <SignaturePad
-            label="Agente Educativo *"
-            sublabel="Personal responsable de Educación Inicial"
-            placeholderName="Nombre completo del Agente Educativo"
-            nameValue={data.agenteEducativo.nombre}
-            onNameChange={(val) =>
-              updateData({
-                agenteEducativo: { ...data.agenteEducativo, nombre: val },
-              })
-            }
-            signatureValue={data.agenteEducativo.firma}
-            onSignatureChange={(val) =>
-              updateData({
-                agenteEducativo: { ...data.agenteEducativo, firma: val },
-              })
-            }
-          />
+          {/* Agente Educativo */}
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-800 mb-1">
+                Nombre del Agente Educativo <span className="text-rose-500 font-bold">*</span>
+              </label>
+              <p className="text-xs text-slate-500 mb-2">Personal responsable de Educación Inicial</p>
+              <input
+                type="text"
+                placeholder="Nombre completo del Agente Educativo"
+                value={data.agenteEducativo.nombre || 'Guadalupe Jazmín Hernández Amador'}
+                onChange={(e) =>
+                  updateData({
+                    agenteEducativo: { ...data.agenteEducativo, nombre: e.target.value },
+                  })
+                }
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 text-sm focus:ring-2 focus:ring-nl-petrol shadow-sm"
+              />
+            </div>
 
-          <SignaturePad
-            label="Madre, Padre o Cuidador Responsable *"
-            sublabel="Titular que acompaña al infante en el servicio"
-            placeholderName="Nombre del padre, madre o cuidador"
-            nameValue={data.tutorResponsable.nombre || data.mama.nombre || data.papa.nombre}
-            onNameChange={(val) =>
-              updateData({
-                tutorResponsable: { ...data.tutorResponsable, nombre: val },
-              })
-            }
-            signatureValue={data.tutorResponsable.firma}
-            onSignatureChange={(val) =>
-              updateData({
-                tutorResponsable: { ...data.tutorResponsable, firma: val },
-              })
-            }
-          />
+            {/* Signature Box for Print */}
+            <div>
+              <span className="text-xs font-semibold text-slate-600 block mb-1.5">
+                Firma del Agente Educativo:
+              </span>
+              <div className="h-32 rounded-2xl border-2 border-dashed border-slate-300 bg-white flex flex-col items-center justify-center p-4 text-center select-none">
+                <FileCheck className="w-6 h-6 text-nl-petrol mb-1 opacity-70" />
+                <span className="text-xs font-bold text-slate-700">Espacio para firma autógrafa</span>
+                <span className="text-[11px] text-slate-500 mt-0.5">
+                  (Se firmará a mano con pluma una vez impreso)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Padre, Madre o Tutor */}
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-800 mb-1">
+                Nombre del Padre, Madre o Tutor que firmará <span className="text-rose-500 font-bold">*</span>
+              </label>
+              <p className="text-xs text-slate-500 mb-2">Titular o cuidador que acompaña al infante</p>
+              
+              {/* Quick suggestions if parent names exist */}
+              {(data.mama?.nombre || data.papa?.nombre || data.otroCuidador?.nombre) && (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  <span className="text-[11px] text-slate-500 font-semibold w-full">Sugerir nombre:</span>
+                  {data.mama?.nombre && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateData({
+                          tutorResponsable: { ...data.tutorResponsable, nombre: data.mama.nombre },
+                        })
+                      }
+                      className="text-xs px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-nl-petrol-soft hover:text-nl-petrol font-medium transition-colors"
+                    >
+                      Mamá: {data.mama.nombre}
+                    </button>
+                  )}
+                  {data.papa?.nombre && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateData({
+                          tutorResponsable: { ...data.tutorResponsable, nombre: data.papa.nombre },
+                        })
+                      }
+                      className="text-xs px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-nl-petrol-soft hover:text-nl-petrol font-medium transition-colors"
+                    >
+                      Papá: {data.papa.nombre}
+                    </button>
+                  )}
+                  {data.otroCuidador?.nombre && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateData({
+                          tutorResponsable: { ...data.tutorResponsable, nombre: data.otroCuidador.nombre },
+                        })
+                      }
+                      className="text-xs px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-nl-petrol-soft hover:text-nl-petrol font-medium transition-colors"
+                    >
+                      Cuidador: {data.otroCuidador.nombre}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <input
+                type="text"
+                placeholder="Nombre de la persona responsable que firmará"
+                value={data.tutorResponsable.nombre || data.mama.nombre || data.papa.nombre || data.otroCuidador.nombre}
+                onChange={(e) =>
+                  updateData({
+                    tutorResponsable: { ...data.tutorResponsable, nombre: e.target.value },
+                  })
+                }
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 text-sm focus:ring-2 focus:ring-nl-petrol shadow-sm"
+              />
+            </div>
+
+            {/* Signature Box for Print */}
+            <div>
+              <span className="text-xs font-semibold text-slate-600 block mb-1.5">
+                Firma del Padre, Madre o Cuidador:
+              </span>
+              <div className="h-32 rounded-2xl border-2 border-dashed border-slate-300 bg-white flex flex-col items-center justify-center p-4 text-center select-none">
+                <FileCheck className="w-6 h-6 text-nl-petrol mb-1 opacity-70" />
+                <span className="text-xs font-bold text-slate-700">Espacio para firma autógrafa</span>
+                <span className="text-[11px] text-slate-500 mt-0.5">
+                  (Se firmará a mano con pluma una vez impreso)
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </SectionCard>
 

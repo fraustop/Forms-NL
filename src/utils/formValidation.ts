@@ -164,9 +164,6 @@ export const validateStep = (
       if (!data.agenteEducativo?.nombre?.trim()) {
         errors.push('Nombre del Agente Educativo');
       }
-      if (!data.agenteEducativo?.firma?.trim()) {
-        errors.push('Firma del Agente Educativo');
-      }
 
       const tutorNombre =
         data.tutorResponsable?.nombre?.trim() ||
@@ -175,10 +172,7 @@ export const validateStep = (
         data.otroCuidador?.nombre?.trim();
 
       if (!tutorNombre) {
-        errors.push('Nombre de la Madre, Padre o Cuidador Responsable');
-      }
-      if (!data.tutorResponsable?.firma?.trim()) {
-        errors.push('Firma de la Madre, Padre o Cuidador Responsable');
+        errors.push('Nombre de la Madre, Padre o Tutor Responsable que firmará');
       }
       if (!data.consentimientoAvisoPrivacidad) {
         errors.push('Aceptación del Aviso Legal y Protección de Datos Personales');

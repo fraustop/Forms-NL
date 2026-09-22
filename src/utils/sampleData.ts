@@ -92,7 +92,7 @@ export const SAMPLE_FORM_DATA: CharacterizationFormData = {
   fortalezasYMejoras: 'Fortaleza: Gran curiosidad, afecto espontáneo y excelente disposición para comer alimentos variados. Aspecto a fortalecer: Fomentar mayor paciencia cuando tiene que esperar su turno para jugar con su hermana.',
   motivoYExpectativas: 'Decidimos ingresar al servicio para enriquecer su desarrollo socioafectivo y cognitivo en sus primeros años. Esperamos recibir orientación pedagógica práctica para continuar potenciando sus habilidades desde nuestro hogar.',
   agenteEducativo: {
-    nombre: 'Lic. Mariana Guadalupe Treviño Garza',
+    nombre: 'Guadalupe Jazmín Hernández Amador',
     firma: '',
   },
   tutorResponsable: {

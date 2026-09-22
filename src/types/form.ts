@@ -242,7 +242,7 @@ export const INITIAL_FORM_DATA: CharacterizationFormData = {
   fortalezasYMejoras: '',
   motivoYExpectativas: '',
   agenteEducativo: {
-    nombre: '',
+    nombre: 'Guadalupe Jazmín Hernández Amador',
     firma: '',
   },
   tutorResponsable: {
