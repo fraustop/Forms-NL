@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, CloudCheck, Printer, ArrowRight, Sparkles, X } from 'lucide-react';
+import { Copy, Check, CloudCheck, ArrowRight, ShieldCheck, Sparkles, X, PlusCircle } from 'lucide-react';
 
 interface SaveFirestoreModalProps {
   isOpen: boolean;
@@ -7,7 +7,7 @@ interface SaveFirestoreModalProps {
   documentId: string;
   folio: string;
   childName: string;
-  onOpenPrint: () => void;
+  onNavigateToResponses: () => void;
   onNewForm: () => void;
 }
 
@@ -17,7 +17,7 @@ export const SaveFirestoreModal: React.FC<SaveFirestoreModalProps> = ({
   documentId,
   folio,
   childName,
-  onOpenPrint,
+  onNavigateToResponses,
   onNewForm,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -46,16 +46,16 @@ export const SaveFirestoreModal: React.FC<SaveFirestoreModalProps> = ({
           <CloudCheck className="w-9 h-9" />
         </div>
 
-        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-teal-50 text-teal-800 text-xs font-bold mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Guardado en Firebase Firestore
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold mb-2">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Enviado Exitosamente a Firestore
         </span>
 
         <h3 className="text-xl sm:text-2xl font-bold font-display text-slate-900 mb-1">
-          ¡Expediente Registrado con Éxito!
+          ¡Formulario Enviado con Éxito!
         </h3>
 
         <p className="text-xs sm:text-sm text-slate-600 mb-5 leading-relaxed">
-          Los datos de caracterización de <strong className="text-slate-900">{childName || 'la niña o niño'}</strong> se han almacenado de forma segura en la base de datos de <strong>Nuevo León Educación</strong>.
+          Los datos de caracterización de <strong className="text-slate-900">{childName || 'la niña o niño'}</strong> han sido guardados y registrados correctamente en la plataforma oficial de <strong>Educación Inicial Nuevo León</strong>.
         </p>
 
         {/* Folio & Doc ID Box */}
@@ -63,7 +63,7 @@ export const SaveFirestoreModal: React.FC<SaveFirestoreModalProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-                Folio Oficial del Formato
+                Folio Oficial Registrado
               </span>
               <span className="text-base font-extrabold text-nl-petrol font-mono">
                 {folio}
@@ -73,7 +73,7 @@ export const SaveFirestoreModal: React.FC<SaveFirestoreModalProps> = ({
             <button
               type="button"
               onClick={copyFolio}
-              className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-teal-50 hover:text-nl-petrol text-xs font-bold flex items-center gap-1 shadow-2xs transition-colors"
+              className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-teal-50 hover:text-nl-petrol text-xs font-bold flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
             >
               {copied ? (
                 <>
@@ -90,37 +90,40 @@ export const SaveFirestoreModal: React.FC<SaveFirestoreModalProps> = ({
           </div>
 
           <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
-            <span>ID Documento:</span>
+            <span>ID de Registro:</span>
             <span className="font-mono text-[11px] text-slate-600 truncate max-w-[200px]">
               {documentId}
             </span>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-2.5">
+        {/* Action Buttons: ONLY View Responses OR Start New Form */}
+        <div className="space-y-3">
+          {/* Option 1: Ver las Respuestas */}
           <button
             type="button"
             onClick={() => {
               onClose();
-              onOpenPrint();
+              onNavigateToResponses();
             }}
-            className="w-full py-3 px-4 rounded-2xl bg-nl-petrol hover:bg-nl-petrol-dark text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+            className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-nl-petrol to-teal-700 hover:from-nl-petrol-dark hover:to-teal-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
           >
-            <Printer className="w-4 h-4" />
-            <span>Ver e Imprimir Formato Oficial (PDF)</span>
+            <ShieldCheck className="w-4 h-4 text-amber-300" />
+            <span>Ver las Respuestas</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
 
+          {/* Option 2: Comenzar un Nuevo Formulario */}
           <button
             type="button"
             onClick={() => {
               onClose();
               onNewForm();
             }}
-            className="w-full py-2.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            className="w-full py-3 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
-            <span>Llenar Nuevo Formato</span>
-            <ArrowRight className="w-4 h-4" />
+            <PlusCircle className="w-4 h-4 text-nl-petrol" />
+            <span>Comenzar un Nuevo Formulario</span>
           </button>
         </div>
       </div>

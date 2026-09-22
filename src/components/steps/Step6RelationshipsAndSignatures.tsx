@@ -3,12 +3,11 @@ import type { CharacterizationFormData } from '../../types/form';
 import { SectionCard, SuggestionChips } from '../common/FormInputs';
 import { SignaturePad } from '../common/SignaturePad';
 import { BeeIllustration } from '../common/BrandAssets';
-import { HeartHandshake, HelpCircle, FileCheck, ShieldCheck, Sparkles, Printer, CloudUpload, Loader2 } from 'lucide-react';
+import { HeartHandshake, HelpCircle, FileCheck, ShieldCheck, Sparkles, Send, Loader2 } from 'lucide-react';
 
 interface Step6Props {
   data: CharacterizationFormData;
   updateData: (fields: Partial<CharacterizationFormData>) => void;
-  onOpenPrintPreview: () => void;
   onSaveToCloud: () => void;
   isSavingToCloud: boolean;
 }
@@ -16,7 +15,6 @@ interface Step6Props {
 export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
   data,
   updateData,
-  onOpenPrintPreview,
   onSaveToCloud,
   isSavingToCloud,
 }) => {
@@ -174,42 +172,32 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-card flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="space-y-0.5 text-center md:text-left">
           <h4 className="font-bold text-slate-800 text-base flex items-center justify-center md:justify-start gap-1.5">
-            <Sparkles className="w-4 h-4 text-amber-500" /> ¡Formato Digital Listo para Guardar!
+            <Sparkles className="w-4 h-4 text-amber-500" /> ¡Formato Digital Completado!
           </h4>
           <p className="text-xs text-slate-500">
-            Guarda el expediente directamente en Firestore y descarga la versión PDF oficial.
+            Haz clic en Enviar para guardar y formalizar este expediente en la plataforma oficial.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-center">
-          {/* Save to Firestore Button */}
+        <div className="flex items-center gap-3 w-full md:w-auto justify-center">
+          {/* Submit / Enviar Button */}
           <button
             type="button"
             onClick={onSaveToCloud}
             disabled={isSavingToCloud}
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-75 cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-sm shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-75 cursor-pointer"
           >
             {isSavingToCloud ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Guardando en Firestore...</span>
+                <span>Enviando Formulario...</span>
               </>
             ) : (
               <>
-                <CloudUpload className="w-4 h-4 text-emerald-200" />
-                <span>Guardar en la Nube (Firestore)</span>
+                <Send className="w-4 h-4" />
+                <span>Enviar</span>
               </>
             )}
-          </button>
-
-          {/* View / Print Official PDF Button */}
-          <button
-            type="button"
-            onClick={onOpenPrintPreview}
-            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-sm shadow-2xs flex items-center justify-center gap-2 transition-all"
-          >
-            <Printer className="w-4 h-4 text-nl-petrol" />
-            <span>Ver Formato PDF</span>
           </button>
         </div>
       </div>

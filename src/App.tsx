@@ -16,7 +16,7 @@ import { SAMPLE_FORM_DATA } from './utils/sampleData';
 import { saveFormToFirestore } from './services/formService';
 import { subscribeToAuthChanges } from './services/authService';
 import type { User } from 'firebase/auth';
-import { ArrowLeft, ArrowRight, Printer, Sparkles, CloudUpload, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
@@ -125,6 +125,7 @@ export const App: React.FC = () => {
     try {
       const res = await saveFormToFirestore(formData);
       if (res.success && res.id && res.folio) {
+        localStorage.removeItem(STORAGE_KEY);
         confetti({
           particleCount: 120,
           spread: 80,
@@ -251,10 +252,6 @@ export const App: React.FC = () => {
           <Step6RelationshipsAndSignatures
             data={formData}
             updateData={updateFormData}
-            onOpenPrintPreview={() => {
-              setPreviewDocumentData(formData);
-              setShowPrintPreview(true);
-            }}
             onSaveToCloud={handleSaveToFirestore}
             isSavingToCloud={isSavingToCloud}
           />
@@ -301,14 +298,15 @@ export const App: React.FC = () => {
         documentId={saveModal.documentId}
         folio={saveModal.folio}
         childName={formData.nombreCompleto}
-        onOpenPrint={() => {
-          setPreviewDocumentData(formData);
-          setShowPrintPreview(true);
+        onNavigateToResponses={() => {
+          setSaveModal((prev) => ({ ...prev, isOpen: false }));
+          navigateTo('respuestas');
         }}
         onNewForm={() => {
           setFormData(INITIAL_FORM_DATA);
           localStorage.removeItem(STORAGE_KEY);
           setCurrentStep(1);
+          setSaveModal((prev) => ({ ...prev, isOpen: false }));
         }}
       />
 
@@ -376,42 +374,35 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {currentStep === 6 && (
+            {currentStep < 6 ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all text-white bg-gradient-to-r from-nl-petrol to-teal-700 hover:from-nl-petrol-dark hover:to-teal-800 shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <span>Siguiente</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
               <button
                 type="button"
                 onClick={handleSaveToFirestore}
                 disabled={isSavingToCloud}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow transition-colors cursor-pointer"
+                className="px-8 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all text-white bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 shadow-md hover:shadow-lg cursor-pointer disabled:opacity-75"
               >
                 {isSavingToCloud ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Enviando...</span>
+                  </>
                 ) : (
-                  <CloudUpload className="w-3.5 h-3.5" />
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Enviar</span>
+                  </>
                 )}
-                <span>Guardar en Firestore</span>
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setPreviewDocumentData(formData);
-                setShowPrintPreview(true);
-              }}
-              className="hidden md:flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 transition-colors cursor-pointer"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Ver Formato PDF</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={nextStep}
-              className="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all text-white bg-gradient-to-r from-nl-petrol to-teal-700 hover:from-nl-petrol-dark hover:to-teal-800 shadow-md hover:shadow-lg cursor-pointer"
-            >
-              <span>{currentStep === 6 ? 'Finalizar y Ver PDF' : 'Siguiente'}</span>
-              {currentStep === 6 ? <Sparkles className="w-4 h-4 text-amber-300" /> : <ArrowRight className="w-4 h-4" />}
-            </button>
           </div>
         </div>
       </div>
