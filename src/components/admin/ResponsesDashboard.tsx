@@ -4,7 +4,7 @@ import type { CharacterizationFormData } from '../../types/form';
 import type { StoredFormDetail } from '../../services/formService';
 import { fetchAllFormDetails, deleteFormDocument, exportFormsToCSV } from '../../services/formService';
 import { loginWithEmail, logout, checkIsAdmin } from '../../services/authService';
-import { listenForRealtimeSubmissions, isDeviceLocallyRegistered } from '../../services/notificationService';
+import { listenForRealtimeSubmissions, isDeviceLocallyRegistered, getRegisteredDevicesCount } from '../../services/notificationService';
 import { RegisterDeviceModal } from './RegisterDeviceModal';
 import { AUTHORIZED_ADMIN_EMAIL } from '../../firebase/config';
 import { NuevoLeonHeader, SunIllustration } from '../common/BrandAssets';
@@ -46,6 +46,7 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
   const [authLoading, setAuthLoading] = useState<boolean>(false);
   const [isDeviceModalOpen, setIsDeviceModalOpen] = useState<boolean>(false);
   const [isRegistered, setIsRegistered] = useState<boolean>(() => isDeviceLocallyRegistered());
+  const [registeredDevicesCount, setRegisteredDevicesCount] = useState<number>(0);
   const [newSubmissionAlert, setNewSubmissionAlert] = useState<string | null>(null);
 
   // Email / Password Form State
@@ -62,8 +63,12 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
 
     setLoading(true);
     try {
-      const data = await fetchAllFormDetails();
+      const [data, deviceCount] = await Promise.all([
+        fetchAllFormDetails(),
+        getRegisteredDevicesCount(),
+      ]);
       setForms(data);
+      setRegisteredDevicesCount(deviceCount);
     } catch (err: any) {
       console.error('Error cargando respuestas:', err);
     } finally {
@@ -341,7 +346,11 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
                 title="Registrar este dispositivo para alertas sonoras y notificaciones en tiempo real al llenarse un formulario (Requiere Contraseña)"
               >
                 <Bell className={`w-3.5 h-3.5 ${isRegistered ? 'text-amber-600' : 'text-amber-100 animate-bounce'}`} />
-                <span>{isRegistered ? '🔔 Dispositivo Registrado' : '🔔 Registrar Dispositivo (Requiere Clave)'}</span>
+                <span>
+                  {isRegistered
+                    ? `🔔 Dispositivo Registrado (${registeredDevicesCount} activo${registeredDevicesCount !== 1 ? 's' : ''})`
+                    : `🔔 Registrar Dispositivo (${registeredDevicesCount} activo${registeredDevicesCount !== 1 ? 's' : ''})`}
+                </span>
               </button>
 
               <button

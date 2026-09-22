@@ -1,4 +1,4 @@
-import { doc, setDoc, serverTimestamp, collection, query, onSnapshot, orderBy, limit } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection, query, onSnapshot, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db, AUTHORIZED_ADMIN_EMAIL } from '../firebase/config';
 import type { User } from 'firebase/auth';
 
@@ -7,6 +7,19 @@ export const ADMIN_DEVICE_PASSWORD = 'EduInicialNL2026';
 
 // Clave de almacenamiento local
 const DEVICE_REGISTERED_KEY = 'nl_admin_device_registered_v1';
+
+/**
+ * Obtiene el número total de dispositivos registrados en Firestore
+ */
+export async function getRegisteredDevicesCount(): Promise<number> {
+  try {
+    const snap = await getDocs(collection(db, 'admin_push_tokens'));
+    return snap.size;
+  } catch (e) {
+    console.warn('Error consultando dispositivos registrados:', e);
+    return 0;
+  }
+}
 
 /**
  * Reproduce un sonido de campana sutil y agradable usando Web Audio API
