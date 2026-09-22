@@ -72,6 +72,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
         title="Rutinas y Hábitos Diarios"
         subtitle="¿Qué rutinas tiene la niña o el niño diariamente? (Al irse a dormir, al comer, al levantarse, etc.)"
         icon={<Clock className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -95,6 +96,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
         title="Rutinas de Auto-Cuidado e Higiene"
         subtitle="¿Cuáles rutinas de auto-cuidado e higiene practica la niña o el niño independientemente?"
         icon={<Sparkles className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -118,7 +120,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
         title="Consumo de Alimentos en el Día"
         subtitle="¿Qué tipo de alimentos consume la niña o el niño durante la mañana, tarde y noche?"
         icon={<Utensils className="w-5 h-5" />}
-        badge="Nutrición"
+        badge="Requerido"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Mañana */}
@@ -127,7 +129,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
               <div className="w-7 h-7 rounded-lg bg-amber-200 flex items-center justify-center">
                 <Sunrise className="w-4 h-4 text-amber-700" />
               </div>
-              <span>Mañana</span>
+              <span>Mañana <span className="text-rose-500 font-bold">*</span></span>
             </div>
             <p className="text-[11px] text-amber-800">Desayuno y colación matutina</p>
             <textarea
@@ -145,7 +147,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
               <div className="w-7 h-7 rounded-lg bg-orange-200 flex items-center justify-center">
                 <Sun className="w-4 h-4 text-orange-700" />
               </div>
-              <span>Tarde</span>
+              <span>Tarde <span className="text-rose-500 font-bold">*</span></span>
             </div>
             <p className="text-[11px] text-orange-800">Comida y colación vespertina</p>
             <textarea
@@ -163,7 +165,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
               <div className="w-7 h-7 rounded-lg bg-indigo-200 flex items-center justify-center">
                 <Moon className="w-4 h-4 text-indigo-700" />
               </div>
-              <span>Noche</span>
+              <span>Noche <span className="text-rose-500 font-bold">*</span></span>
             </div>
             <p className="text-[11px] text-indigo-800">Cena ligera antes de dormir</p>
             <textarea
@@ -181,6 +183,7 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
           <FormField
             label="¿Cuáles son los alimentos que más le gustan?"
             sublabel="Alimentos favoritos o que consume con mayor agrado"
+            required
           >
             <input
               type="text"

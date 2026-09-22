@@ -81,7 +81,7 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
             </FormField>
           </div>
 
-          <FormField label="Lugar de nacimiento">
+          <FormField label="Lugar de nacimiento" required>
             <div className="relative">
               <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
@@ -148,7 +148,7 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
           {/* Sex Selection */}
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between">
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-              Sexo del infante <span className="text-rose-500">*</span>
+              Sexo del infante <span className="text-rose-500 font-bold">*</span>
             </span>
             <div className="grid grid-cols-2 gap-2.5">
               <button
@@ -181,13 +181,14 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
         <div className="space-y-3 pt-3">
           <YesNoRadio
             label="¿La niña o el niño se encuentra registrado ante el Registro Civil?"
+            required
             value={data.estaRegistrado}
             onChange={(val) => updateData({ estaRegistrado: val })}
             showConditionalWhen={false}
             conditionalContent={
               <div>
                 <label className="block text-xs font-semibold text-rose-800 mb-1">
-                  ¿Cuál es la razón por la que no se encuentra registrado?
+                  ¿Cuál es la razón por la que no se encuentra registrado? <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -202,13 +203,14 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
 
           <YesNoRadio
             label="¿Su familia se encuentra dentro de algún grupo poblacional étnico?"
+            required
             value={data.grupoEtnico}
             onChange={(val) => updateData({ grupoEtnico: val })}
             showConditionalWhen={true}
             conditionalContent={
               <div>
                 <label className="block text-xs font-semibold text-nl-petrol-dark mb-1">
-                  ¿Cuál grupo poblacional étnico?
+                  ¿Cuál grupo poblacional étnico? <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -224,6 +226,7 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
           <YesNoRadio
             label="¿Se encuentra en situación de migración actualmente?"
             sublabel="Indique si la familia o el menor se han desplazado recientemente de otro estado o país"
+            required
             value={data.situacionMigracion}
             onChange={(val) => updateData({ situacionMigracion: val })}
           />
@@ -235,9 +238,10 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
         title="Medidas Antropométricas y Alergias"
         subtitle="Registro de peso, talla y reacciones alérgicas"
         icon={<Heart className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Altura actual (Talla)">
+          <FormField label="Altura actual (Talla)" required>
             <div className="relative">
               <Ruler className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
@@ -250,7 +254,7 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
             </div>
           </FormField>
 
-          <FormField label="Peso actual">
+          <FormField label="Peso actual" required>
             <div className="relative">
               <Scale className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
@@ -267,13 +271,14 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
         <YesNoRadio
           label="¿Presenta alguna alergia a alimentos o elementos del ambiente?"
           sublabel="Medicamentos, polvo, polen, picaduras, leche, cacahuate, etc."
+          required
           value={data.alergias}
           onChange={(val) => updateData({ alergias: val })}
           showConditionalWhen={true}
           conditionalContent={
             <div>
               <label className="block text-xs font-semibold text-nl-petrol-dark mb-1">
-                ¿A qué elementos o alimentos presenta alergia?
+                ¿A qué elementos o alimentos presenta alergia? <span className="text-rose-500 font-bold">*</span>
               </label>
               <input
                 type="text"

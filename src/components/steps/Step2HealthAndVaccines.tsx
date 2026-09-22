@@ -68,18 +68,20 @@ export const Step2HealthAndVaccines: React.FC<Step2Props> = ({ data, updateData 
         title="Historial de Salud y Afiliación"
         subtitle="Instituciones de atención, padecimientos o diagnósticos específicos"
         icon={<Activity className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-3">
           <YesNoRadio
             label="¿Afiliado a algún sistema de salud público o privado?"
             sublabel="IMSS, ISSSTE, IMSS-Bienestar, Seguro del Estado, Servicios Médicos Estatales, Seguro Privado, etc."
+            required
             value={data.afiliadoSalud}
             onChange={(val) => updateData({ afiliadoSalud: val })}
             showConditionalWhen={true}
             conditionalContent={
               <div>
                 <label className="block text-xs font-semibold text-nl-petrol-dark mb-1">
-                  ¿A cuál sistema o institución se encuentra afiliado?
+                  ¿A cuál sistema o institución se encuentra afiliado? <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -95,13 +97,14 @@ export const Step2HealthAndVaccines: React.FC<Step2Props> = ({ data, updateData 
           <YesNoRadio
             label="¿La niña o el niño tiene alguna enfermedad médica diagnosticada o en tratamiento?"
             sublabel="Asma, cardiopatías, epilepsia, reflujo severo, diabetes infantil, etc."
+            required
             value={data.enfermedadMedica}
             onChange={(val) => updateData({ enfermedadMedica: val })}
             showConditionalWhen={true}
             conditionalContent={
               <div>
                 <label className="block text-xs font-semibold text-nl-petrol-dark mb-1">
-                  ¿Cuál enfermedad y qué cuidados requiere?
+                  ¿Cuál enfermedad y qué cuidados requiere? <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -117,13 +120,14 @@ export const Step2HealthAndVaccines: React.FC<Step2Props> = ({ data, updateData 
           <YesNoRadio
             label="¿La niña o el niño tiene algún tipo de discapacidad diagnosticada?"
             sublabel="Visual, auditiva, motriz, psicosocial, intelectual o del neurodesarrollo"
+            required
             value={data.discapacidad}
             onChange={(val) => updateData({ discapacidad: val })}
             showConditionalWhen={true}
             conditionalContent={
               <div>
                 <label className="block text-xs font-semibold text-nl-petrol-dark mb-1">
-                  ¿Cuál tipo de discapacidad y grado de apoyo requerido?
+                  ¿Cuál tipo de discapacidad y grado de apoyo requerido? <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -140,10 +144,10 @@ export const Step2HealthAndVaccines: React.FC<Step2Props> = ({ data, updateData 
 
       {/* Vaccination Grid Card */}
       <SectionCard
-        title="Esquema Nacional de Vacunación"
-        subtitle="Selecciona las vacunas que la niña o el niño ha recibido"
+        title="Esquema Nacional de Vacunación (Opcional)"
+        subtitle="Registro voluntario del esquema de vacunación según la cartilla de salud"
         icon={<ShieldCheck className="w-5 h-5" />}
-        badge="Cartilla de Salud"
+        badge="Opcional"
       >
         {/* Quick Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200">

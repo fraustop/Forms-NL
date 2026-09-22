@@ -58,6 +58,7 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
         title="Vínculos y Momentos de Interacción"
         subtitle="Identifique las fortalezas y/o aspectos a mejorar en las relaciones que se establecen con la niña o el niño en los momentos de alimentación, juego, cuidado, trato, entre otras."
         icon={<HeartHandshake className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -81,6 +82,7 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
         title="Motivación y Expectativas del Servicio"
         subtitle="¿Por qué decidió ser parte de este servicio? y ¿Qué espera del servicio?"
         icon={<HelpCircle className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -108,7 +110,7 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SignaturePad
-            label="Agente Educativo"
+            label="Agente Educativo *"
             sublabel="Personal responsable de Educación Inicial"
             placeholderName="Nombre completo del Agente Educativo"
             nameValue={data.agenteEducativo.nombre}
@@ -126,7 +128,7 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
           />
 
           <SignaturePad
-            label="Madre, Padre o Cuidador Responsable"
+            label="Madre, Padre o Cuidador Responsable *"
             sublabel="Titular que acompaña al infante en el servicio"
             placeholderName="Nombre del padre, madre o cuidador"
             nameValue={data.tutorResponsable.nombre || data.mama.nombre || data.papa.nombre}
@@ -163,7 +165,7 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
             className="mt-0.5 w-4 h-4 rounded text-nl-petrol focus:ring-nl-petrol border-slate-300"
           />
           <span className="text-xs font-semibold text-slate-800">
-            He leído y acepto el tratamiento de datos personales para fines exclusivamente educativos y de seguimiento infantil.
+            He leído y acepto el tratamiento de datos personales para fines exclusivamente educativos y de seguimiento infantil. <span className="text-rose-500 font-bold">*</span>
           </span>
         </label>
       </div>

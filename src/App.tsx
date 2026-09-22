@@ -11,10 +11,12 @@ import { Step5PlayAndEmotions } from './components/steps/Step5PlayAndEmotions';
 import { Step6RelationshipsAndSignatures } from './components/steps/Step6RelationshipsAndSignatures';
 import { PrintableDocument } from './components/preview/PrintableDocument';
 import { SaveFirestoreModal } from './components/common/SaveFirestoreModal';
+import { ValidationErrorModal } from './components/common/ValidationErrorModal';
 import { ResponsesDashboard } from './components/admin/ResponsesDashboard';
 import { SAMPLE_FORM_DATA } from './utils/sampleData';
 import { saveFormToFirestore } from './services/formService';
 import { subscribeToAuthChanges } from './services/authService';
+import { validateStep, validateAllSteps, isStepComplete } from './utils/formValidation';
 import type { User } from 'firebase/auth';
 import { ArrowLeft, ArrowRight, Send, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -56,6 +58,19 @@ export const App: React.FC = () => {
   // Locked Submission State
   const [isSubmittedLocked, setIsSubmittedLocked] = useState<boolean>(false);
   const [submittedFormData, setSubmittedFormData] = useState<CharacterizationFormData | null>(null);
+
+  // Validation Error Modal state
+  const [validationModal, setValidationModal] = useState<{
+    isOpen: boolean;
+    stepTitle: string;
+    errors: string[];
+    isSubmitting?: boolean;
+  }>({
+    isOpen: false,
+    stepTitle: '',
+    errors: [],
+    isSubmitting: false,
+  });
 
   // Firestore Save state
   const [isSavingToCloud, setIsSavingToCloud] = useState<boolean>(false);
@@ -108,6 +123,7 @@ export const App: React.FC = () => {
     setShowPrintPreview(false);
     setPreviewDocumentData(null);
     setSaveModal({ isOpen: false, documentId: '', folio: '' });
+    setValidationModal({ isOpen: false, stepTitle: '', errors: [], isSubmitting: false });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -140,9 +156,18 @@ export const App: React.FC = () => {
 
   // Save to Firebase Firestore
   const handleSaveToFirestore = async () => {
-    if (!formData.nombreCompleto) {
-      alert('Por favor ingrese al menos el nombre de la niña o niño antes de guardar en Firestore.');
-      setCurrentStep(1);
+    // Validar todas las preguntas obligatorias del formulario completo
+    const allValidation = validateAllSteps(formData);
+    if (!allValidation.isValid) {
+      const stepNum = allValidation.firstFailingStep || 1;
+      setCurrentStep(stepNum);
+      setValidationModal({
+        isOpen: true,
+        stepTitle: STEPS.find((s) => s.id === stepNum)?.title || `Paso ${stepNum}`,
+        errors: allValidation.errors,
+        isSubmitting: true,
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -181,31 +206,14 @@ export const App: React.FC = () => {
 
   // Calculate completion percentage
   const calculateProgress = (): number => {
-    let score = 0;
-    let total = 10;
-
-    if (formData.nombreCompleto) score++;
-    if (formData.fechaNacimiento) score++;
-    if (formData.sexo) score++;
-    if (formData.afiliadoSalud !== null) score++;
-    if (Object.keys(formData.vacunas || {}).length > 0) score++;
-    if (formData.mama?.nombre || formData.papa?.nombre) score++;
-    if (formData.rutinasDiarias) score++;
-    if (formData.alimentos?.manana || formData.alimentos?.tarde) score++;
-    if (formData.juegoPreferencias || formData.estrategiasEmociones) score++;
-    if (formData.agenteEducativo?.nombre || formData.tutorResponsable?.nombre) score++;
-
-    return Math.round((score / total) * 100);
+    const completedCount = STEPS.filter((s) => isStepComplete(s.id, formData)).length;
+    return Math.round((completedCount / STEPS.length) * 100);
   };
 
-  // Check completed steps
-  const completedSteps: number[] = [];
-  if (formData.nombreCompleto && formData.fechaNacimiento) completedSteps.push(1);
-  if (formData.afiliadoSalud !== null || Object.keys(formData.vacunas || {}).length > 0) completedSteps.push(2);
-  if (formData.mama?.nombre || formData.papa?.nombre || formData.otroCuidador?.nombre) completedSteps.push(3);
-  if (formData.rutinasDiarias || formData.alimentos?.manana) completedSteps.push(4);
-  if (formData.juegoPreferencias || formData.estrategiasEmociones) completedSteps.push(5);
-  if (formData.consentimientoAvisoPrivacidad) completedSteps.push(6);
+  // Check completed steps (accurately using validation logic)
+  const completedSteps: number[] = STEPS.map((s) => s.id).filter((stepId) =>
+    isStepComplete(stepId, formData)
+  );
 
   // Export JSON
   const handleExportJSON = () => {
@@ -248,6 +256,18 @@ export const App: React.FC = () => {
 
   // Navigation handlers
   const nextStep = () => {
+    // Validar preguntas obligatorias del paso actual antes de avanzar
+    const stepValidation = validateStep(currentStep, formData);
+    if (!stepValidation.isValid) {
+      setValidationModal({
+        isOpen: true,
+        stepTitle: STEPS.find((s) => s.id === currentStep)?.title || `Paso ${currentStep}`,
+        errors: stepValidation.errors,
+        isSubmitting: false,
+      });
+      return;
+    }
+
     if (currentStep < 6) {
       setCurrentStep((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -341,6 +361,15 @@ export const App: React.FC = () => {
           setShowPrintPreview(true);
         }}
         onNewForm={handleStartNewForm}
+      />
+
+      {/* Required Validation Error Modal */}
+      <ValidationErrorModal
+        isOpen={validationModal.isOpen}
+        stepTitle={validationModal.stepTitle}
+        errors={validationModal.errors}
+        isSubmitting={validationModal.isSubmitting}
+        onClose={() => setValidationModal((prev) => ({ ...prev, isOpen: false }))}
       />
 
       {/* Main App Header */}

@@ -64,6 +64,7 @@ export const Step5PlayAndEmotions: React.FC<Step5Props> = ({ data, updateData })
         title="Juego y Recreación"
         subtitle="¿Qué le gusta jugar a la niña o niño?, ¿Con quién juega? y ¿Cuál es su juguete favorito?"
         icon={<Gamepad2 className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -87,6 +88,7 @@ export const Step5PlayAndEmotions: React.FC<Step5Props> = ({ data, updateData })
         title="Reglas y Acuerdos de Crianza en el Hogar"
         subtitle="¿Cuáles son las reglas o acuerdos en familia relacionados con la crianza de la niña o el niño?"
         icon={<ShieldAlert className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea
@@ -110,7 +112,7 @@ export const Step5PlayAndEmotions: React.FC<Step5Props> = ({ data, updateData })
         title="Estrategias para el Manejo de Emociones"
         subtitle="¿Qué estrategias utilizan desde el hogar para el manejo de sus emociones?"
         icon={<Heart className="w-5 h-5" />}
-        badge="Socioemocional"
+        badge="Requerido"
       >
         <div className="bg-purple-50/70 border border-purple-200 rounded-2xl p-4 text-xs text-purple-900 mb-3 space-y-1">
           <span className="font-bold block flex items-center gap-1">
@@ -143,6 +145,7 @@ export const Step5PlayAndEmotions: React.FC<Step5Props> = ({ data, updateData })
         title={`Describa un día de ${data.nombreCompleto || 'la niña o el niño'}`}
         subtitle="Relato narrativo de un día cotidiano (desde que despierta hasta dormir)"
         icon={<BookOpen className="w-5 h-5" />}
+        badge="Requerido"
       >
         <div className="space-y-2">
           <textarea

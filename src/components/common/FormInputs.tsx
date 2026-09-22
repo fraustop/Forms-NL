@@ -29,6 +29,7 @@ interface YesNoRadioProps {
   label: string;
   value: boolean | null;
   onChange: (val: boolean) => void;
+  required?: boolean;
   sublabel?: string;
   yesLabel?: string;
   noLabel?: string;
@@ -40,6 +41,7 @@ export const YesNoRadio: React.FC<YesNoRadioProps> = ({
   label,
   value,
   onChange,
+  required,
   sublabel,
   yesLabel = 'Sí',
   noLabel = 'No',
@@ -50,7 +52,9 @@ export const YesNoRadio: React.FC<YesNoRadioProps> = ({
     <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80 transition-all hover:bg-slate-50">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <span className="text-sm font-bold text-slate-800 block">{label}</span>
+          <span className="text-sm font-bold text-slate-800 block">
+            {label} {required && <span className="text-rose-500 font-bold ml-0.5">*</span>}
+          </span>
           {sublabel && <span className="text-xs text-slate-500 block mt-0.5">{sublabel}</span>}
         </div>
 
