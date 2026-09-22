@@ -53,6 +53,10 @@ export const App: React.FC = () => {
   const [previewDocumentData, setPreviewDocumentData] = useState<CharacterizationFormData | null>(null);
   const [lastSavedTime, setLastSavedTime] = useState<string>('Guardado automático activo');
 
+  // Locked Submission State
+  const [isSubmittedLocked, setIsSubmittedLocked] = useState<boolean>(false);
+  const [submittedFormData, setSubmittedFormData] = useState<CharacterizationFormData | null>(null);
+
   // Firestore Save state
   const [isSavingToCloud, setIsSavingToCloud] = useState<boolean>(false);
   const [saveModal, setSaveModal] = useState<{
@@ -73,9 +77,15 @@ export const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Listen to URL changes (back/forward buttons)
+  // Listen to URL changes (back/forward buttons) & block return if form is submitted
   useEffect(() => {
     const handlePopState = () => {
+      if (isSubmittedLocked) {
+        // Bloquear el retroceso al formulario editable
+        window.history.pushState({ locked: true }, '', window.location.href);
+        return;
+      }
+
       const search = window.location.search.toLowerCase();
       if (search.includes('respuestas') || search.includes('panel') || search.includes('admin')) {
         setView('respuestas');
@@ -86,7 +96,20 @@ export const App: React.FC = () => {
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [isSubmittedLocked]);
+
+  // Reset & Start a New Form cleanly
+  const handleStartNewForm = () => {
+    setFormData(INITIAL_FORM_DATA);
+    setSubmittedFormData(null);
+    setIsSubmittedLocked(false);
+    localStorage.removeItem(STORAGE_KEY);
+    setCurrentStep(1);
+    setShowPrintPreview(false);
+    setPreviewDocumentData(null);
+    setSaveModal({ isOpen: false, documentId: '', folio: '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Switch view helper and update browser URL parameter
   const navigateTo = (targetView: 'form' | 'respuestas') => {
@@ -98,8 +121,9 @@ export const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Auto-save to localStorage whenever formData changes
+  // Auto-save to localStorage whenever formData changes (only if not locked)
   useEffect(() => {
+    if (isSubmittedLocked) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
       const now = new Date();
@@ -107,9 +131,10 @@ export const App: React.FC = () => {
     } catch (e) {
       console.error('Failed to auto-save to localStorage', e);
     }
-  }, [formData]);
+  }, [formData, isSubmittedLocked]);
 
   const updateFormData = (fields: Partial<CharacterizationFormData>) => {
+    if (isSubmittedLocked) return;
     setFormData((prev) => ({ ...prev, ...fields }));
   };
 
@@ -125,7 +150,12 @@ export const App: React.FC = () => {
     try {
       const res = await saveFormToFirestore(formData);
       if (res.success && res.id && res.folio) {
+        // Guardar copia del formulario enviado y bloquear el estado
+        setSubmittedFormData({ ...formData });
+        setIsSubmittedLocked(true);
         localStorage.removeItem(STORAGE_KEY);
+        window.history.pushState({ locked: true }, '', window.location.href);
+
         confetti({
           particleCount: 120,
           spread: 80,
@@ -261,15 +291,23 @@ export const App: React.FC = () => {
     }
   };
 
-  // If Print Preview is active (either from current form or from Admin panel item)
-  if (showPrintPreview && (previewDocumentData || formData)) {
+  // If Print Preview is active (either from current form, submitted document, or from Admin panel item)
+  if (showPrintPreview && (previewDocumentData || submittedFormData || formData)) {
     return (
       <PrintableDocument
-        data={previewDocumentData || formData}
+        data={previewDocumentData || submittedFormData || formData}
         onClose={() => {
-          setShowPrintPreview(false);
-          setPreviewDocumentData(null);
+          if (isSubmittedLocked) {
+            setShowPrintPreview(false);
+            setSaveModal((prev) => ({ ...prev, isOpen: true }));
+          } else {
+            setShowPrintPreview(false);
+            setPreviewDocumentData(null);
+          }
         }}
+        isReadOnlySubmitted={isSubmittedLocked}
+        onNewForm={handleStartNewForm}
+        onNavigateToResponses={() => navigateTo('respuestas')}
       />
     );
   }
@@ -291,23 +329,18 @@ export const App: React.FC = () => {
   // Default: Viewing Characterization Form (?Form1)
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Save to Firestore Success Modal */}
+      {/* Save to Firestore Success Full Screen Modal */}
       <SaveFirestoreModal
         isOpen={saveModal.isOpen}
-        onClose={() => setSaveModal((prev) => ({ ...prev, isOpen: false }))}
         documentId={saveModal.documentId}
         folio={saveModal.folio}
-        childName={formData.nombreCompleto}
-        onNavigateToResponses={() => {
+        childName={submittedFormData?.nombreCompleto || formData.nombreCompleto}
+        onViewSubmittedResponses={() => {
           setSaveModal((prev) => ({ ...prev, isOpen: false }));
-          navigateTo('respuestas');
+          setPreviewDocumentData(submittedFormData || formData);
+          setShowPrintPreview(true);
         }}
-        onNewForm={() => {
-          setFormData(INITIAL_FORM_DATA);
-          localStorage.removeItem(STORAGE_KEY);
-          setCurrentStep(1);
-          setSaveModal((prev) => ({ ...prev, isOpen: false }));
-        }}
+        onNewForm={handleStartNewForm}
       />
 
       {/* Main App Header */}

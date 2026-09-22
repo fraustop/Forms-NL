@@ -3,14 +3,23 @@ import type { CharacterizationFormData } from '../../types/form';
 import { VACCINES_LIST, VACCINE_AGE_SLOTS } from '../../types/form';
 import { NuevoLeonHeader, SunIllustration, FlowerIllustration, BeeIllustration, ChildIllustration } from '../common/BrandAssets';
 import { formatDateToDMY } from '../../utils/dateUtils';
-import { Printer, X } from 'lucide-react';
+import { Printer, X, PlusCircle, ShieldCheck, Lock } from 'lucide-react';
 
 interface PrintableDocumentProps {
   data: CharacterizationFormData;
   onClose?: () => void;
+  isReadOnlySubmitted?: boolean;
+  onNewForm?: () => void;
+  onNavigateToResponses?: () => void;
 }
 
-export const PrintableDocument: React.FC<PrintableDocumentProps> = ({ data, onClose }) => {
+export const PrintableDocument: React.FC<PrintableDocumentProps> = ({
+  data,
+  onClose,
+  isReadOnlySubmitted,
+  onNewForm,
+  onNavigateToResponses,
+}) => {
   const handlePrint = () => {
     window.print();
   };
@@ -25,29 +34,61 @@ export const PrintableDocument: React.FC<PrintableDocumentProps> = ({ data, onCl
   );
 
   return (
-    <div className="bg-slate-100 min-h-screen py-6 px-2 sm:px-6">
+    <div className="bg-slate-100 min-h-screen py-6 px-2 sm:px-6 font-sans">
       {/* Floating Action Bar (hidden on print) */}
       <div className="no-print sticky top-4 z-50 max-w-4xl mx-auto mb-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="font-bold text-slate-800 text-sm sm:text-base">
-            Vista Previa de Impresión Oficial (PDF)
+          <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+            {isReadOnlySubmitted ? (
+              <>
+                <Lock className="w-4 h-4 text-nl-petrol" />
+                <span>Expediente Enviado (Modo Solo Lectura)</span>
+              </>
+            ) : (
+              <span>Vista Previa de Impresión Oficial (PDF)</span>
+            )}
           </h3>
           <p className="text-xs text-slate-500">
-            Formato fiel al documento original de 8 páginas del Gobierno de Nuevo León.
+            {isReadOnlySubmitted
+              ? 'El formulario fue registrado exitosamente. La interfaz de edición se encuentra bloqueada.'
+              : 'Formato fiel al documento original de 8 páginas del Gobierno de Nuevo León.'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap gap-2 text-xs sm:text-sm">
           <button
+            type="button"
             onClick={handlePrint}
-            className="px-4 py-2 rounded-xl bg-nl-petrol hover:bg-nl-petrol-dark text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow transition-all"
+            className="px-4 py-2 rounded-xl bg-nl-petrol hover:bg-nl-petrol-dark text-white font-bold flex items-center gap-2 shadow transition-all cursor-pointer"
           >
             <Printer className="w-4 h-4" /> Imprimir / Guardar como PDF
           </button>
-          {onClose && (
+
+          {isReadOnlySubmitted && onNewForm && (
             <button
+              type="button"
+              onClick={onNewForm}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center gap-1.5 shadow transition-all cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4" /> Iniciar Nuevo Formulario
+            </button>
+          )}
+
+          {isReadOnlySubmitted && onNavigateToResponses && (
+            <button
+              type="button"
+              onClick={onNavigateToResponses}
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold flex items-center gap-1.5 shadow transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-300" /> Ver Panel de Respuestas
+            </button>
+          )}
+
+          {onClose && !isReadOnlySubmitted && (
+            <button
+              type="button"
               onClick={onClose}
-              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold flex items-center gap-1 transition-all"
+              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center gap-1 transition-all cursor-pointer"
             >
               <X className="w-4 h-4" /> Cerrar Vista
             </button>
