@@ -55,6 +55,37 @@ export function isDeviceLocallyRegistered(): boolean {
 }
 
 /**
+ * Muestra una notificación visual en el sistema a través del Service Worker o API nativa
+ */
+export async function showSystemNotification(title: string, options: NotificationOptions) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg && reg.showNotification) {
+        await reg.showNotification(title, options);
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('[Notification] No se pudo mostrar vía ServiceWorker, intentando fallback nativo:', e);
+  }
+
+  try {
+    const notif = new Notification(title, options);
+    notif.onclick = () => {
+      window.focus();
+      if (!window.location.search.includes('Respuestas')) {
+        window.location.href = '/?Respuestas';
+      }
+    };
+  } catch (e) {
+    console.error('[Notification] Error al mostrar notificación:', e);
+  }
+}
+
+/**
  * Valida la contraseña y registra este dispositivo para notificaciones en tiempo real
  */
 export async function registerDeviceWithPassword(
@@ -82,6 +113,15 @@ export async function registerDeviceWithPassword(
       return { success: false, message: 'Permiso de notificaciones denegado en el navegador. Por favor habilita los permisos del sitio.' };
     }
 
+    // Registrar o asegurar Service Worker
+    if ('serviceWorker' in navigator) {
+      try {
+        await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' });
+      } catch (swErr) {
+        console.warn('Error registrando SW en autorización:', swErr);
+      }
+    }
+
     const deviceFingerprint = `${navigator.userAgent.replace(/[^a-zA-Z0-9]/g, '').substring(0, 30)}_${window.screen.width}x${window.screen.height}`;
     const tokenDocId = `device_${btoa(deviceFingerprint).replace(/[^a-zA-Z0-9]/g, '').substring(0, 24)}`;
 
@@ -101,10 +141,11 @@ export async function registerDeviceWithPassword(
     // Reproducir sonido de prueba
     playNotificationSound();
 
-    // Mostrar notificación de confirmación
-    new Notification('🔔 Notificaciones en Tiempo Real Activadas', {
-      body: 'Este dispositivo recibirá alertas instantáneas cuando se registre un nuevo infante.',
+    // Mostrar notificación de confirmación vía Service Worker
+    await showSystemNotification('🔔 Notificaciones en Tiempo Real Activadas', {
+      body: 'Este dispositivo recibirá alertas sonoras e instantáneas cuando se registre un nuevo infante.',
       icon: '/favicon.svg',
+      badge: '/favicon.svg',
     });
 
     return {
@@ -119,7 +160,7 @@ export async function registerDeviceWithPassword(
 
 /**
  * Escucha en tiempo real la llegada de NUEVOS formularios completados
- * Dispara sonido y notificación nativa del navegador instantáneamente.
+ * Dispara sonido y notificación nativa/ServiceWorker del navegador instantáneamente.
  */
 export function listenForRealtimeSubmissions(onNewSubmission?: (formData: any) => void) {
   if (!('Notification' in window) || Notification.permission !== 'granted') {
@@ -149,22 +190,13 @@ export function listenForRealtimeSubmissions(onNewSubmission?: (formData: any) =
           // 1. Reproducir sonido
           playNotificationSound();
 
-          // 2. Disparar notificación nativa del navegador
-          if (Notification.permission === 'granted') {
-            const notif = new Notification(`🌟 Nuevo Formulario: ${childName}`, {
-              body: `Folio: ${folio} ${age ? `• ${age}` : ''}\nSe ha recibido un nuevo registro en tiempo real.`,
-              icon: '/favicon.svg',
-              badge: '/favicon.svg',
-              tag: `sub_${change.doc.id}`,
-            });
-
-            notif.onclick = () => {
-              window.focus();
-              if (!window.location.search.includes('Respuestas')) {
-                window.location.href = '/?Respuestas';
-              }
-            };
-          }
+          // 2. Disparar notificación vía Service Worker
+          showSystemNotification(`🌟 Nuevo Formulario: ${childName}`, {
+            body: `Folio: ${folio} ${age ? `• ${age}` : ''}\nSe ha recibido un nuevo registro en tiempo real.`,
+            icon: '/favicon.svg',
+            badge: '/favicon.svg',
+            tag: `sub_${change.doc.id}`,
+          });
 
           if (onNewSubmission) {
             onNewSubmission(data);

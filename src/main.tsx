@@ -3,17 +3,31 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 
-// Limpieza automática de Service Workers antiguos o residuales de otros proyectos en localhost
+// Registro del Service Worker oficial para notificaciones Push
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const registration of registrations) {
-      // Si el service worker es de una versión anterior o de otra app, desregistrarlo para evitar conflictos
-      registration.unregister().then((success) => {
-        if (success) {
-          console.log('[Cleanup] Service Worker antiguo desregistrado con éxito.');
-        }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/firebase-messaging-sw.js', { scope: '/' })
+      .then((reg) => {
+        console.log('[Service Worker] Notificaciones SW registrado con éxito. Scope:', reg.scope);
+      })
+      .catch((err) => {
+        console.warn('[Service Worker] Registro de SW fallido:', err);
       });
-    }
+
+    // Limpieza selectiva: desregistrar solo service workers de otros proyectos que no correspondan a esta app
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        const scriptUrl = registration.active?.scriptURL || registration.installing?.scriptURL || '';
+        if (scriptUrl && !scriptUrl.includes('firebase-messaging-sw.js')) {
+          registration.unregister().then((success) => {
+            if (success) {
+              console.log('[Cleanup] Service Worker ajeno desregistrado:', scriptUrl);
+            }
+          });
+        }
+      }
+    });
   });
 
   // Limpiar cachés antiguas si existen
