@@ -4,7 +4,8 @@ import type { CharacterizationFormData } from '../../types/form';
 import type { StoredFormDetail } from '../../services/formService';
 import { fetchAllFormDetails, deleteFormDocument, exportFormsToCSV } from '../../services/formService';
 import { loginWithGoogle, loginWithEmail, logout, checkIsAdmin } from '../../services/authService';
-import { registerAdminDeviceForNotifications } from '../../services/notificationService';
+import { listenForRealtimeSubmissions, isDeviceLocallyRegistered } from '../../services/notificationService';
+import { RegisterDeviceModal } from './RegisterDeviceModal';
 import { AUTHORIZED_ADMIN_EMAIL } from '../../firebase/config';
 import { NuevoLeonHeader, SunIllustration } from '../common/BrandAssets';
 import {
@@ -24,7 +25,7 @@ import {
   KeyRound,
   Download,
   Bell,
-  Check,
+  Sparkles,
 } from 'lucide-react';
 
 interface ResponsesDashboardProps {
@@ -43,8 +44,9 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(false);
-  const [pushStatus, setPushStatus] = useState<string | null>(null);
-  const [pushLoading, setPushLoading] = useState<boolean>(false);
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState<boolean>(false);
+  const [isRegistered, setIsRegistered] = useState<boolean>(() => isDeviceLocallyRegistered());
+  const [newSubmissionAlert, setNewSubmissionAlert] = useState<string | null>(null);
 
   // Email / Password Form State
   const [emailInput, setEmailInput] = useState<string>(AUTHORIZED_ADMIN_EMAIL);
@@ -72,6 +74,18 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
   useEffect(() => {
     if (currentUser && isAdmin) {
       loadData();
+
+      // Escuchar la llegada de NUEVOS formularios en tiempo real
+      const unsubscribe = listenForRealtimeSubmissions((newDocData) => {
+        loadData(); // Refrescar automáticamente la tabla
+        const childName = newDocData?.nombreCompleto || 'Nuevo Infante';
+        setNewSubmissionAlert(`🌟 ¡Nuevo formulario recibido en tiempo real: ${childName}!`);
+        setTimeout(() => setNewSubmissionAlert(null), 8000);
+      });
+
+      return () => {
+        unsubscribe();
+      };
     } else {
       setLoading(false);
     }
@@ -100,14 +114,6 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
     if (!res.success) {
       setAuthError(res.error || 'Error al autenticar.');
     }
-  };
-
-  const handleEnablePush = async () => {
-    setPushLoading(true);
-    const res = await registerAdminDeviceForNotifications(currentUser);
-    setPushLoading(false);
-    setPushStatus(res.message);
-    setTimeout(() => setPushStatus(null), 4000);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -363,15 +369,19 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
             </div>
 
             <div className="flex items-center flex-wrap gap-2 text-xs">
+              {/* Botón de Registro de Dispositivo Protegido por Contraseña */}
               <button
                 type="button"
-                onClick={handleEnablePush}
-                disabled={pushLoading}
-                className="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="Activar notificaciones push para este dispositivo"
+                onClick={() => setIsDeviceModalOpen(true)}
+                className={`px-3 py-2 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm border ${
+                  isRegistered
+                    ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-amber-600 shadow'
+                }`}
+                title="Registrar este dispositivo para alertas sonoras y notificaciones en tiempo real al llenarse un formulario (Requiere Contraseña)"
               >
-                <Bell className="w-3.5 h-3.5 text-amber-600" />
-                <span>{pushLoading ? 'Activando...' : 'Activar Notificaciones Push'}</span>
+                <Bell className={`w-3.5 h-3.5 ${isRegistered ? 'text-amber-600' : 'text-amber-100 animate-bounce'}`} />
+                <span>{isRegistered ? '🔔 Dispositivo Registrado' : '🔔 Registrar Dispositivo (Requiere Clave)'}</span>
               </button>
 
               <button
@@ -417,10 +427,19 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {pushStatus && (
-          <div className="bg-teal-50 border border-teal-200 rounded-2xl p-3 text-xs text-teal-800 font-semibold flex items-center gap-2 animate-fadeIn">
-            <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{pushStatus}</span>
+        {/* Banner de Nueva Respuesta en Tiempo Real */}
+        {newSubmissionAlert && (
+          <div className="bg-gradient-to-r from-teal-600 to-nl-petrol text-white rounded-2xl p-4 text-xs sm:text-sm font-bold flex items-center justify-between gap-3 shadow-lg animate-bounce border border-teal-400">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-300 shrink-0" />
+              <span>{newSubmissionAlert}</span>
+            </div>
+            <button
+              onClick={() => setNewSubmissionAlert(null)}
+              className="text-white/80 hover:text-white px-2 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-xs"
+            >
+              Cerrar
+            </button>
           </div>
         )}
 
@@ -645,6 +664,16 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
           )}
         </div>
       </main>
+
+      {/* Modal de Registro de Dispositivo Protegido por Contraseña */}
+      <RegisterDeviceModal
+        isOpen={isDeviceModalOpen}
+        onClose={() => setIsDeviceModalOpen(false)}
+        currentUser={currentUser}
+        onRegistrationSuccess={() => {
+          setIsRegistered(true);
+        }}
+      />
     </div>
   );
 };
