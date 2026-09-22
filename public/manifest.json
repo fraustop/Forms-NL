@@ -1,0 +1,19 @@
+{
+  "name": "Educación Inicial Nuevo León",
+  "short_name": "Forms NL",
+  "description": "Formato de Caracterización y Seguimiento Infantil - Educación Inicial Nuevo León",
+  "start_url": "/?Respuestas",
+  "display": "standalone",
+  "background_color": "#006674",
+  "theme_color": "#006674",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "gcm_sender_id": "103953800507"
+}

@@ -16,9 +16,11 @@ import { ResponsesDashboard } from './components/admin/ResponsesDashboard';
 import { SAMPLE_FORM_DATA } from './utils/sampleData';
 import { saveFormToFirestore } from './services/formService';
 import { subscribeToAuthChanges } from './services/authService';
+import { listenForRealtimeSubmissions, isDeviceLocallyRegistered } from './services/notificationService';
+import { AUTHORIZED_ADMIN_EMAIL } from './firebase/config';
 import { validateStep, validateAllSteps, isStepComplete } from './utils/formValidation';
 import type { User } from 'firebase/auth';
-import { ArrowLeft, ArrowRight, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send, Loader2, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
@@ -84,6 +86,14 @@ export const App: React.FC = () => {
     folio: '',
   });
 
+  // Realtime submission floating alert banner state
+  const [realtimeAlert, setRealtimeAlert] = useState<{
+    childName: string;
+    folio: string;
+    age: string;
+    time: string;
+  } | null>(null);
+
   // Listen to Firebase Auth state
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges((user) => {
@@ -91,6 +101,31 @@ export const App: React.FC = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  // Escuchar formularios en tiempo real en toda la app si es admin o dispositivo registrado
+  useEffect(() => {
+    const isAdminUser = currentUser?.email?.toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase();
+    const isRegistered = isDeviceLocallyRegistered();
+
+    if (isAdminUser || isRegistered) {
+      console.log('[App] Activando listener de notificaciones en tiempo real...');
+      const unsubscribe = listenForRealtimeSubmissions((data) => {
+        const childName = data.nombreCompleto || data.nombreNino || 'Nuevo Infante';
+        const folio = data.folio || 'NL-EI';
+        const age = data.edadAnos ? `${data.edadAnos} años, ${data.edadMeses || 0} meses` : '';
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        setRealtimeAlert({
+          childName,
+          folio,
+          age,
+          time: now,
+        });
+      });
+
+      return () => unsubscribe();
+    }
+  }, [currentUser]);
 
   // Listen to URL changes (back/forward buttons) & block return if form is submitted
   useEffect(() => {
@@ -371,6 +406,57 @@ export const App: React.FC = () => {
         isSubmitting={validationModal.isSubmitting}
         onClose={() => setValidationModal((prev) => ({ ...prev, isOpen: false }))}
       />
+
+      {/* Floating Realtime Submission Alert Toast */}
+      <AnimatePresence>
+        {realtimeAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-4 right-4 left-4 sm:left-auto sm:w-96 z-50 shadow-2xl"
+          >
+            <div className="bg-gradient-to-r from-teal-950 via-nl-petrol to-teal-800 text-white p-4 rounded-2xl border-2 border-amber-300 shadow-xl flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center shrink-0 font-bold text-lg shadow-sm animate-bounce">
+                <Bell className="w-5 h-5 text-slate-900" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] uppercase font-bold text-amber-300 tracking-wider">
+                    ¡Nuevo Registro en Vivo!
+                  </span>
+                  <span className="text-[10px] text-teal-200">{realtimeAlert.time}</span>
+                </div>
+                <h4 className="font-bold text-sm text-white truncate mt-0.5">
+                  {realtimeAlert.childName}
+                </h4>
+                <p className="text-xs text-teal-100">
+                  Folio: <span className="font-mono font-bold text-amber-200">{realtimeAlert.folio}</span> {realtimeAlert.age && `• ${realtimeAlert.age}`}
+                </p>
+                <div className="mt-2.5 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigateTo('respuestas');
+                      setRealtimeAlert(null);
+                    }}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-amber-400 text-slate-900 font-bold hover:bg-amber-300 transition-colors cursor-pointer shadow-sm"
+                  >
+                    Ver en Respuestas →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRealtimeAlert(null)}
+                    className="text-xs text-teal-200 hover:text-white px-2 py-1 cursor-pointer"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main App Header */}
       <Header

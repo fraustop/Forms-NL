@@ -4,7 +4,12 @@ import type { CharacterizationFormData } from '../../types/form';
 import type { StoredFormDetail } from '../../services/formService';
 import { fetchAllFormDetails, deleteFormDocument, exportFormsToCSV } from '../../services/formService';
 import { loginWithEmail, logout, checkIsAdmin } from '../../services/authService';
-import { listenForRealtimeSubmissions, isDeviceLocallyRegistered, getRegisteredDevicesCount } from '../../services/notificationService';
+import {
+  listenForRealtimeSubmissions,
+  isDeviceLocallyRegistered,
+  getRegisteredDevicesCount,
+  triggerTestNotification,
+} from '../../services/notificationService';
 import { RegisterDeviceModal } from './RegisterDeviceModal';
 import { AUTHORIZED_ADMIN_EMAIL } from '../../firebase/config';
 import { NuevoLeonHeader, SunIllustration } from '../common/BrandAssets';
@@ -351,6 +356,17 @@ export const ResponsesDashboard: React.FC<ResponsesDashboardProps> = ({
                     ? `🔔 Dispositivo Registrado (${registeredDevicesCount} activo${registeredDevicesCount !== 1 ? 's' : ''})`
                     : `🔔 Registrar Dispositivo (${registeredDevicesCount} activo${registeredDevicesCount !== 1 ? 's' : ''})`}
                 </span>
+              </button>
+
+              {/* Botón de Prueba Rápida de Notificación y Sonido */}
+              <button
+                type="button"
+                onClick={() => triggerTestNotification()}
+                className="px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-nl-petrol border border-teal-200 font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                title="Probar sonido de campana y notificación en este dispositivo"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>Probar Notificación</span>
               </button>
 
               <button
