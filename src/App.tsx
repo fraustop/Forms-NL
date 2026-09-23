@@ -424,9 +424,9 @@ export const App: React.FC = () => {
         completionPercentage={calculateProgress()}
       />
 
-      {/* Ribbon Fijo de Pasos (Sticky Stepper Bar) */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs py-2 px-3 sm:px-6">
-        <div className="max-w-5xl mx-auto">
+      {/* Ribbon Fijo de Pasos (Exactamente 50px de alto, sticky al hacer scroll) */}
+      <div className="sticky top-0 z-30 h-[50px] bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs flex items-center px-3 sm:px-6">
+        <div className="max-w-5xl w-full mx-auto flex items-center">
           <StepperNav
             currentStep={currentStep}
             onSelectStep={(stepId) => {

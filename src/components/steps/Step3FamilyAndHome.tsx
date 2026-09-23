@@ -70,32 +70,32 @@ export const Step3FamilyAndHome: React.FC<Step3Props> = ({ data, updateData }) =
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-orange-700 text-white rounded-3xl p-6 sm:p-7 shadow-card">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner (Compactado 25%) */}
+      <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-orange-700 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-200">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-200">
               Páginas 3 y 4: Entorno Familiar y Red de Cuidado
             </span>
-            <h2 className="text-2xl font-bold font-display">Datos Familiares y del Hogar</h2>
-            <p className="text-amber-100 text-xs sm:text-sm">
+            <h2 className="text-lg sm:text-xl font-bold font-display">Datos Familiares y del Hogar</h2>
+            <p className="text-amber-100 text-[11px] sm:text-xs">
               Información de contacto de madres, padres, cuidadores primarios y dinámica del hogar.
             </p>
           </div>
-          <div className="p-3 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 self-start sm:self-auto">
-            <Users className="w-8 h-8 text-amber-200" />
+          <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 self-start sm:self-auto shrink-0">
+            <Users className="w-6 h-6 text-amber-200" />
           </div>
         </div>
       </div>
 
       {/* Mandatory Parent / Caregiver Banner */}
-      <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
-        <div className="w-8 h-8 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center shrink-0 font-bold text-sm">
+      <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-2.5 shadow-xs">
+        <div className="w-6 h-6 rounded-lg bg-amber-200 text-amber-900 flex items-center justify-center shrink-0 font-bold text-xs">
           *
         </div>
         <div className="text-xs text-amber-950 space-y-0.5">
-          <span className="font-bold text-sm block">Requisito Obligatorio de Responsables:</span>
-          <p className="leading-relaxed">
+          <span className="font-bold text-xs block">Requisito Obligatorio de Responsables:</span>
+          <p className="leading-relaxed text-[11px]">
             Es obligatorio registrar los datos completos de <strong>al menos un responsable</strong> del infante (puede ser <strong>Mamá</strong>, <strong>Papá</strong> o <strong>Cuidador primario</strong>).
           </p>
         </div>

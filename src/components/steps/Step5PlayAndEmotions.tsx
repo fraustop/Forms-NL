@@ -41,20 +41,20 @@ export const Step5PlayAndEmotions: React.FC<Step5Props> = ({ data, updateData })
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-700 to-teal-700 text-white rounded-3xl p-6 sm:p-7 shadow-card">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner (Compactado 25%) */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-purple-700 via-indigo-700 to-teal-700 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-purple-200">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-200">
               Páginas 6 y 7: Vínculos, Crianza y Bienestar Socioemocional
             </span>
-            <h2 className="text-2xl font-bold font-display">Juego, Crianza y Manejo de Emociones</h2>
-            <p className="text-purple-100 text-xs sm:text-sm max-w-xl">
+            <h2 className="text-lg sm:text-xl font-bold font-display">Juego, Crianza y Manejo de Emociones</h2>
+            <p className="text-purple-100 text-[11px] sm:text-xs max-w-lg">
               Exploración de dinámicas de juego, normas familiares de convivencia y acompañamiento socioafectivo.
             </p>
           </div>
           <div className="self-start sm:self-auto shrink-0 flex items-center gap-2">
-            <ChildIllustration className="w-12 h-14" />
+            <ChildIllustration className="w-9 h-10" />
           </div>
         </div>
       </div>

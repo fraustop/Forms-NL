@@ -49,20 +49,20 @@ export const Step4RoutinesAndNutrition: React.FC<Step4Props> = ({ data, updateDa
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 text-white rounded-3xl p-6 sm:p-7 shadow-card">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner (Compactado 25%) */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-200">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-200">
               Páginas 4 y 5: Hábitos Diarios y Alimentación
             </span>
-            <h2 className="text-2xl font-bold font-display">Rutinas, Auto-Cuidado y Nutrición</h2>
-            <p className="text-emerald-100 text-xs sm:text-sm max-w-xl">
+            <h2 className="text-lg sm:text-xl font-bold font-display">Rutinas, Auto-Cuidado y Nutrición</h2>
+            <p className="text-emerald-100 text-[11px] sm:text-xs max-w-lg">
               Conozcamos las rutinas cotidianas, el grado de independencia en higiene y los hábitos alimentarios.
             </p>
           </div>
           <div className="self-start sm:self-auto shrink-0">
-            <BeeIllustration className="w-16 h-12 animate-float" />
+            <BeeIllustration className="w-10 h-8 animate-float" />
           </div>
         </div>
       </div>

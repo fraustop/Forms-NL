@@ -34,20 +34,20 @@ export const Step6RelationshipsAndSignatures: React.FC<Step6Props> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-nl-petrol via-teal-800 to-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-card">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner (Compactado 25%) */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-nl-petrol via-teal-800 to-slate-900 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-300">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-teal-300">
               Página 8: Vínculos, Expectativas y Formalización
             </span>
-            <h2 className="text-2xl font-bold font-display">Relaciones, Expectativas y Firmas</h2>
-            <p className="text-teal-100 text-xs sm:text-sm max-w-xl">
+            <h2 className="text-lg sm:text-xl font-bold font-display">Relaciones, Expectativas y Firmas</h2>
+            <p className="text-teal-100 text-[11px] sm:text-xs max-w-lg">
               Cierre de la caracterización, acuerdos mutuos y formalización con firmas de los participantes.
             </p>
           </div>
           <div className="self-start sm:self-auto shrink-0">
-            <BeeIllustration className="w-16 h-12 animate-wiggle" />
+            <BeeIllustration className="w-10 h-8 animate-wiggle" />
           </div>
         </div>
       </div>

@@ -42,21 +42,21 @@ export const Step2HealthAndVaccines: React.FC<Step2Props> = ({ data, updateData 
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-teal-700 to-emerald-700 text-white rounded-3xl p-6 sm:p-7 shadow-card">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner (Compactado 25%) */}
+      <div className="bg-gradient-to-r from-teal-700 to-emerald-700 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-200">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-teal-200">
               Página 2: Salud Integral y Esquema de Vacunación
             </span>
-            <h2 className="text-2xl font-bold font-display">Sistema de Salud y Cartilla</h2>
-            <p className="text-teal-100 text-xs sm:text-sm">
+            <h2 className="text-lg sm:text-xl font-bold font-display">Sistema de Salud y Cartilla</h2>
+            <p className="text-teal-100 text-[11px] sm:text-xs">
               Registre las condiciones de salud y el esquema nacional de vacunación del infante.
             </p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2.5 rounded-2xl text-center self-start sm:self-auto">
-            <div className="text-xl font-black text-amber-300">{totalApplied}</div>
-            <div className="text-[10px] text-teal-100 uppercase tracking-wider font-semibold">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 px-3.5 py-1.5 rounded-xl text-center self-start sm:self-auto shrink-0">
+            <div className="text-lg font-black text-amber-300">{totalApplied}</div>
+            <div className="text-[9px] text-teal-100 uppercase tracking-wider font-semibold">
               Dosis Marcadas
             </div>
           </div>

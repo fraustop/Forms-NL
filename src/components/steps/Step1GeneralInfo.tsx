@@ -26,38 +26,38 @@ export const Step1GeneralInfo: React.FC<Step1Props> = ({ data, updateData }) => 
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Friendly Greeting Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-nl-petrol via-nl-petrol-light to-teal-700 text-white rounded-3xl p-6 sm:p-8 shadow-card">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-amber-200 text-xs font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" /> Página 1: Identificación y Salud Inicial
+      {/* Friendly Greeting Header Banner (Compactado 25%) */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-nl-petrol via-nl-petrol-light to-teal-700 text-white rounded-2xl py-3.5 px-4 sm:py-4 sm:px-6 shadow-card">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-amber-200 text-[11px] font-bold tracking-wide">
+              <Sparkles className="w-3 h-3" /> Página 1: Identificación y Salud Inicial
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-bold font-display tracking-tight text-white flex items-center gap-2">
               ¡Hola!, yo soy...
             </h2>
-            <p className="text-teal-100 text-xs sm:text-sm max-w-xl leading-relaxed">
+            <p className="text-teal-100 text-[11px] sm:text-xs max-w-lg leading-snug">
               Formato de Caracterización para los Servicios de Educación Inicial No Escolarizada (AFEI, Visita a los Hogares y CCAPI).
             </p>
           </div>
 
-          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 self-start md:self-auto">
-            <SunIllustration className="w-12 h-12 shrink-0 animate-wiggle" />
+          <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 self-start md:self-auto">
+            <SunIllustration className="w-8 h-8 shrink-0 animate-wiggle" />
             <div>
-              <div className="text-[11px] font-semibold text-teal-200 uppercase tracking-wider">Fecha del Formato</div>
+              <div className="text-[10px] font-semibold text-teal-200 uppercase tracking-wider">Fecha del Formato</div>
               <input
                 type="date"
                 value={data.fecha}
                 onChange={(e) => updateData({ fecha: e.target.value })}
-                className="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer"
+                className="bg-transparent text-white font-bold text-xs sm:text-sm focus:outline-none cursor-pointer"
               />
             </div>
           </div>
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute -right-6 -bottom-8 opacity-20 pointer-events-none">
-          <FlowerIllustration className="w-36 h-36" />
+        <div className="absolute -right-4 -bottom-6 opacity-20 pointer-events-none">
+          <FlowerIllustration className="w-24 h-24" />
         </div>
       </div>
 
