@@ -66,7 +66,7 @@ export const StepperNav: React.FC<StepperNavProps> = ({
   completedSteps,
 }) => {
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-200 p-2 sm:p-3 shadow-sm mb-6">
+    <nav className="w-full" aria-label="Pasos del formulario">
       {/* Desktop Stepper */}
       <div className="hidden lg:grid grid-cols-6 gap-2">
         {STEPS.map((step) => {
@@ -78,7 +78,7 @@ export const StepperNav: React.FC<StepperNavProps> = ({
               key={step.id}
               type="button"
               onClick={() => onSelectStep(step.id)}
-              className={`flex items-center gap-2.5 p-2.5 rounded-xl text-left transition-all relative ${
+              className={`flex items-center gap-2.5 p-2.5 rounded-xl text-left transition-all relative cursor-pointer ${
                 isActive
                   ? 'bg-nl-petrol text-white shadow-md'
                   : isCompleted
@@ -124,7 +124,7 @@ export const StepperNav: React.FC<StepperNavProps> = ({
               key={step.id}
               type="button"
               onClick={() => onSelectStep(step.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                 isActive
                   ? 'bg-nl-petrol text-white shadow-sm ring-2 ring-nl-petrol ring-offset-1'
                   : isCompleted
@@ -140,6 +140,6 @@ export const StepperNav: React.FC<StepperNavProps> = ({
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 };

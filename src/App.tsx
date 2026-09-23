@@ -13,7 +13,6 @@ import { PrintableDocument } from './components/preview/PrintableDocument';
 import { SaveFirestoreModal } from './components/common/SaveFirestoreModal';
 import { ValidationErrorModal } from './components/common/ValidationErrorModal';
 import { ResponsesDashboard } from './components/admin/ResponsesDashboard';
-import { SAMPLE_FORM_DATA } from './utils/sampleData';
 import { saveFormToFirestore } from './services/formService';
 import { subscribeToAuthChanges } from './services/authService';
 import { listenForRealtimeSubmissions, isDeviceLocallyRegistered } from './services/notificationService';
@@ -250,45 +249,6 @@ export const App: React.FC = () => {
     isStepComplete(stepId, formData)
   );
 
-  // Export JSON
-  const handleExportJSON = () => {
-    const cleanName = (formData.nombreCompleto || 'Formato_Caracterizacion')
-      .trim()
-      .replace(/\s+/g, '_');
-    const filename = `Caracterizacion_${cleanName}_${formData.fecha || 'NL'}.json`;
-
-    const blob = new Blob([JSON.stringify(formData, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  // Import JSON
-  const handleImportJSON = (importedData: CharacterizationFormData) => {
-    setFormData(importedData);
-    alert('¡Expediente cargado exitosamente!');
-  };
-
-  // Reset Form
-  const handleReset = () => {
-    if (window.confirm('¿Está seguro de reiniciar el formulario? Se borrarán los datos ingresados actualmente.')) {
-      setFormData(INITIAL_FORM_DATA);
-      localStorage.removeItem(STORAGE_KEY);
-      setCurrentStep(1);
-    }
-  };
-
-  // Fill Sample Data
-  const handleFillSample = () => {
-    setFormData(SAMPLE_FORM_DATA);
-    setLastSavedTime('Datos de ejemplo cargados');
-  };
-
   // Navigation handlers
   const nextStep = () => {
     // Validar preguntas obligatorias del paso actual antes de avanzar
@@ -460,30 +420,26 @@ export const App: React.FC = () => {
 
       {/* Main App Header */}
       <Header
-        onOpenPrintPreview={() => {
-          setPreviewDocumentData(formData);
-          setShowPrintPreview(true);
-        }}
-        onExportJSON={handleExportJSON}
-        onImportJSON={handleImportJSON}
-        onReset={handleReset}
-        onFillSampleData={handleFillSample}
-        onNavigateToResponses={() => navigateTo('respuestas')}
         lastSavedText={lastSavedTime}
         completionPercentage={calculateProgress()}
       />
 
+      {/* Ribbon Fijo de Pasos (Sticky Stepper Bar) */}
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs py-2 px-3 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <StepperNav
+            currentStep={currentStep}
+            onSelectStep={(stepId) => {
+              setCurrentStep(stepId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            completedSteps={completedSteps}
+          />
+        </div>
+      </div>
+
       {/* Stepper & Form Container */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 py-6 pb-28">
-        {/* Step Navigation Bar */}
-        <StepperNav
-          currentStep={currentStep}
-          onSelectStep={(stepId) => {
-            setCurrentStep(stepId);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          completedSteps={completedSteps}
-        />
 
         {/* Active Step with Framer Motion Transition */}
         <AnimatePresence mode="wait">
